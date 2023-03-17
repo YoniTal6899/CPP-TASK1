@@ -12,7 +12,7 @@ PRINT_FUNC ArrPrint;
 } AdpArr, *PAdpArr;
 
 PAdptArray CreateAdptArray(COPY_FUNC cpy, DEL_FUNC del,PRINT_FUNC print){
-    PAdpArr arr= (PAdpArr) malloc(sizeof(AdpArr));
+    PAdpArr arr= (PAdpArr) malloc(sizeof(AdpArr)); 
     if(!arr){return NULL;}
     arr->length=0;
     arr->ArrCopy=cpy;
@@ -24,34 +24,34 @@ PAdptArray CreateAdptArray(COPY_FUNC cpy, DEL_FUNC del,PRINT_FUNC print){
 
 void DeleteAdptArray(PAdptArray arr){
     for(int i=0; i<arr->length;i++){
-        if(arr->values[i]!=NULL){arr->ArrDel(arr->values[i]);}
+        if(arr->values[i]!=NULL){arr->ArrDel(arr->values[i]);} // Delete every not NULL value 
     }
-    free(arr->values);
-    free(arr);
+    free(arr->values); // free memory for the values array
+    free(arr); // free memory for the struct itself
 }
 
 Result SetAdptArrayAt(PAdptArray arr, int index, PElement val){
-    if(index<arr->length){
+    if(index<arr->length){ // Easy case, just replacing inside the 'arr->values'
        if(arr->values[index] != NULL){
-            arr->ArrDel(arr->values[index]);
+            arr->ArrDel(arr->values[index]); //delete the old value
             if (arr->values[index] != NULL){return FAIL;}
        }
-       arr->values[index]=arr->ArrCopy(val); 
+       arr->values[index]=arr->ArrCopy(val); // insert copy of the new value in the right index
     }
-    else{
+    else{ // Complicated case, need to reallocate memory (increase the arr->size)
         int new_length= index+1;
         arr->values= (PElement*) realloc(arr->values,new_length*sizeof(PElement));
-        for (int i = arr->length; i < new_length; i++){arr->values[i]=NULL;}
+        for (int i = arr->length; i < new_length; i++){arr->values[i]=NULL;} // initialize every extra value as NULL 
         arr->length=new_length;
         arr->values[index]=arr->ArrCopy(val);         
     }
-    if (arr->values[index] == NULL){return FAIL;}
+    if (arr->values[index] == NULL){return FAIL;} // Validation
     return SUCCESS;      
 }
 
 PElement GetAdptArrayAt(PAdptArray arr, int index){
-    if(index>=arr->length){return FAIL;}
-    else if (arr->values[index]==NULL){return NULL;}
+    if(index>=arr->length){return FAIL;} // Validation
+    else if (arr->values[index]==NULL){return NULL;} // Validation
     return arr->ArrCopy(arr->values[index]);    
 }
 
